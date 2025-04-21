@@ -15,6 +15,7 @@ Containerlab provides a CLI for orchestrating and managing container-based netwo
     sudo clab deploy frr-lab.clab.yml
 ```
 ### Codespace
+
 ---
 <div align=center markdown>
 <a href="https://codespaces.new/drupertifranco/frr-lab-peering?quickstart=1">
@@ -25,6 +26,7 @@ Containerlab provides a CLI for orchestrating and managing container-based netwo
 <small>Machine type: 2 vCPU · 8 GB RAM</small>
 </div>
 ---
+
 ## Acceder a los RT
 **Comandos**
 - docker exec -it clab-frr-bgp-lab-rtr1 vtysh
