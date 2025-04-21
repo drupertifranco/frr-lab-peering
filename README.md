@@ -116,3 +116,72 @@ Containerlab provides a CLI for orchestrating and managing container-based netwo
     !
     end
     ```
+- *ifx*
+  ```sh
+    frr version 8.4
+    frr defaults traditional
+    hostname ifx
+    log stdout
+    no ip forwarding
+    no ipv6 forwarding
+    !
+    interface eth1
+      ip address 192.168.10.1/30     ! Enlace hacia rtr1
+    !
+    interface lo
+      ip address 100.64.0.1/32       ! Loopback que simula ruta "Internet"
+    !
+    router bgp 8053
+      bgp router-id 8.8.8.8
+      no bgp ebgp-requires-policy
+    
+      ! Relación eBGP con rtr1
+      neighbor 192.168.10.2 remote-as 263806
+      neighbor 192.168.10.2 description rtr1
+    
+      ! Anuncio de la loopback simulada
+      network 100.64.0.1/32
+    !
+    line vty
+  ```
+  - *gd*
+  ```sh
+    frr version 8.4
+    frr defaults traditional
+    hostname gd
+    log stdout
+    no ip forwarding
+    no ipv6 forwarding
+    !
+    interface eth1
+      ip address 192.168.20.1/30     ! Enlace a rtr1
+    !
+    interface eth2
+      ip address 192.168.30.1/30     ! Enlace a rtr2
+    !
+    interface lo
+      ip address 198.51.100.1/32     ! Loopback GD simulada
+    !
+    router bgp 394684
+      bgp router-id 9.9.9.9
+      no bgp ebgp-requires-policy
+    
+      ! Sesión eBGP con rtr1
+      neighbor 192.168.20.2 remote-as 263806
+      neighbor 192.168.20.2 description rtr1
+    
+      ! Sesión eBGP con rtr2
+      neighbor 192.168.30.2 remote-as 263806
+      neighbor 192.168.30.2 description rtr2
+    
+      ! Anuncio de la red loopback GD
+      network 198.51.100.1/32
+    !
+    line vty
+  ```
+
+
+
+
+
+  
