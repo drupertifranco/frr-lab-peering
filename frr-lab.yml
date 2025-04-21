@@ -1,0 +1,29 @@
+name: frr-bgp-lab
+topology:
+  nodes:
+    rtr1:
+      kind: linux
+      image: frrouting/frr:latest
+      binds:
+        - rtr1/daemons:/etc/frr/daemons
+    rtr2:
+      kind: linux
+      image: frrouting/frr:latest
+      binds:
+        - rtr2/daemons:/etc/frr/daemons
+    ifx:
+      kind: linux
+      image: frrouting/frr:latest
+      binds:
+        - ifx/daemons:/etc/frr/daemons
+    gd:
+      kind: linux
+      image: frrouting/frr:latest
+      binds:
+        - gd/daemons:/etc/frr/daemons
+  links:
+    - endpoints: ["rtr1:eth1", "rtr2:eth1"]       # iBGP interno
+    - endpoints: ["rtr1:eth2", "ifx:eth1"]        # eBGP a IFX
+    - endpoints: ["rtr2:eth3", "ifx:eth2"]        # eBGP a IFX
+    - endpoints: ["rtr1:eth3", "gd:eth1"]         # eBGP a GD
+    - endpoints: ["rtr2:eth2", "gd:eth2"]         # eBGP a GD
