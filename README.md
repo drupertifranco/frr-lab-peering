@@ -23,13 +23,96 @@ Containerlab provides a CLI for orchestrating and managing container-based netwo
 ## Configuraciones
 - *Router 1*
   ```sh
-    servidor:
-    puerto: 8080
-    nombre: "Ejemplo"
+    rtr1# show run
+    Building configuration...
+
+    Current configuration:
+    !
+    frr version 8.4_git
+    frr defaults traditional
+    hostname rtr1
+    log stdout
+    no ipv6 forwarding
+    !
+    ip route 203.0.113.0/24 Null0
+    !
+    router bgp 263806
+    bgp router-id 1.1.1.1
+    no bgp ebgp-requires-policy
+    neighbor 10.0.0.2 remote-as 263806
+    neighbor 10.0.0.2 description rtr2
+    neighbor 192.168.10.1 remote-as 8053
+    neighbor 192.168.10.1 description IFX
+    neighbor 192.168.20.1 remote-as 394684
+    neighbor 192.168.20.1 description GD
+    !
+    address-family ipv4 unicast
+      network 203.0.113.0/24
+      neighbor 192.168.10.1 route-map PREF-IFX in
+      neighbor 192.168.20.1 route-map PREF-GD in
+      neighbor 192.168.20.1 route-map PREPEND-GD out
+    exit-address-family
+    exit
+    !
+    route-map PREF-IFX permit 10
+    set local-preference 300
+    exit
+    !
+    route-map PREF-GD permit 10
+    set local-preference 100
+    exit
+    !
+    route-map PREPEND-GD permit 10
+    set as-path prepend 263806 263806 263806
+    exit
+    !
+    end
     ```
 - *Routers 2*
   ```sh
-    servidor:
-    puerto: 8080
-    nombre: "Ejemplo"
+        rtr2# show run
+    Building configuration...
+
+    Current configuration:
+    !
+    frr version 8.4_git
+    frr defaults traditional
+    hostname rtr2
+    no ip forwarding
+    no ipv6 forwarding
+    !
+    ip route 203.0.113.0/24 Null0
+    !
+    interface eth1
+    ip address 10.0.0.2/30
+    exit
+    !
+    interface eth2
+    ip address 192.168.30.2/30
+    exit
+    !
+    router bgp 263806
+    bgp router-id 2.2.2.2
+    no bgp ebgp-requires-policy
+    neighbor 10.0.0.1 remote-as 263806
+    neighbor 10.0.0.1 description rtr1
+    neighbor 192.168.30.1 remote-as 394684
+    neighbor 192.168.30.1 description GD2
+    !
+    address-family ipv4 unicast
+      network 203.0.113.0/24
+      neighbor 192.168.30.1 route-map PREF-GD in
+      neighbor 192.168.30.1 route-map PREPEND-GD out
+    exit-address-family
+    exit
+    !
+    route-map PREF-GD permit 10
+    set local-preference 100
+    exit
+    !
+    route-map PREPEND-GD permit 10
+    set as-path prepend 263806 263806 263806
+    exit
+    !
+    end
     ```
